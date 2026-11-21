@@ -1,0 +1,84 @@
+@page "/inscricao"
+@rendermode InteractiveServer
+@using SistemaInscricaoCursosBlazor.Components.Models
+
+<PageTitle>Inscrição de Cursos</PageTitle>
+
+<div class="container mt-4" style="max-width: 600px;">
+    <h2 class="mb-4">Inscrição em Cursos</h2>
+
+    @if (sucesso)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Inscrição realizada com sucesso!</strong> Os dados de <b>@modelo.Nome</b> foram registrados.
+            <button type="button" class="btn-close" @onclick="() => sucesso = false" aria-label="Close"></button>
+        </div>
+    }
+
+    <EditForm Model="modelo" FormName="InscricaoForm" OnValidSubmit="ProcessarInscricaoAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger mb-3" />
+
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome Completo:</label>
+            <InputText id="nome" class="form-control" @bind-Value="modelo.Nome" placeholder="Digite seu nome completo" />
+            <ValidationMessage For="@(() => modelo.Nome)" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">E-mail:</label>
+            <InputText id="email" class="form-control" @bind-Value="modelo.Email" placeholder="exemplo@email.com" />
+            <ValidationMessage For="@(() => modelo.Email)" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label for="idade" class="form-label">Idade:</label>
+            <InputNumber id="idade" class="form-control" @bind-Value="modelo.Idade" placeholder="Ex: 25" />
+            <ValidationMessage For="@(() => modelo.Idade)" class="text-danger" />
+        </div>
+
+        <div class="mb-4">
+            <label for="curso" class="form-label">Curso Desejado:</label>
+            <InputSelect id="curso" class="form-select" @bind-Value="modelo.CursoId">
+                <option value="">-- Selecione um curso --</option>
+                <option value="CSHARP-101">Desenvolvimento Web com C# e .NET</option>
+                <option value="BLAZOR-202">Interfaces Modernas com Blazor</option>
+                <option value="SQL-303">Banco de Dados Relacional e SQL</option>
+                <option value="CLOUD-404">Arquitetura em Nuvem com Azure</option>
+            </InputSelect>
+            <ValidationMessage For="@(() => modelo.CursoId)" class="text-danger" />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" disabled="@enviando">
+            @if (enviando)
+            {
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>Processando...</span>
+            }
+            else
+            {
+                <span>Confirmar Inscrição</span>
+            }
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    public InscricaoModel modelo { get; set; } = new();
+
+    private bool enviando = false;
+    private bool sucesso = false;
+
+    private async Task ProcessarInscricaoAsync()
+    {
+        enviando = true;
+        sucesso = false;
+
+        // Simula o tempo de processamento de uma requisição assíncrona (2 segundos)
+        await Task.Delay(2000);
+
+        enviando = false;
+        sucesso = true;
+    }
+}
